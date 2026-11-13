@@ -1,0 +1,43 @@
+.floating-emojis {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.floating-emoji {
+  position: absolute;
+  bottom: -48px;
+  display: block;
+  opacity: 0;
+  filter: drop-shadow(0 2px 6px #fff8);
+  animation: float-up var(--float-duration) linear forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0) scale(.8);
+  }
+
+  12% {
+    opacity: var(--float-opacity);
+  }
+
+  85% {
+    opacity: var(--float-opacity);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--float-drift), -115vh, 0) rotate(var(--float-spin)) scale(1.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-emojis {
+    display: none;
+  }
+}

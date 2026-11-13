@@ -1,0 +1,89 @@
+﻿:root {
+  --neon-deep: #930c4b;
+  --neon-mid: #d61272;
+  --neon-hot: #f21885;
+  --neon-light: #ffbce1;
+}
+
+body {
+  background: linear-gradient(145deg, var(--neon-deep), var(--neon-mid), var(--neon-hot));
+  margin: 0;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+.scene {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+}
+
+#canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.name {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0.2em 0.45em;
+  color: #ffd1eb;
+  font-size: clamp(3.5rem, 13vw, 8rem);
+  font-weight: 700;
+  -webkit-text-stroke: 1px #fff;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 12px #fff,
+    0 0 28px var(--neon-light),
+    0 0 56px var(--neon-hot);
+  animation: name-pulse 2.4s ease-in-out infinite;
+}
+
+.home-link {
+  position: fixed;
+  z-index: 2;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  left: 50%;
+  padding: 12px 22px;
+  border: 1px solid var(--neon-light);
+  border-radius: 999px;
+  color: #fff;
+  background: #710936d9;
+  box-shadow: 0 0 18px #ff4ba955;
+  font-size: 1rem;
+  text-decoration: none;
+  transform: translateX(-50%);
+  transition: background .2s ease, box-shadow .2s ease;
+}
+
+.home-link:hover {
+  background: var(--neon-mid);
+  box-shadow: 0 0 26px #ff4ba980;
+}
+
+.home-link:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+@keyframes name-pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .name {
+    animation: none;
+  }
+}
