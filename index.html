@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حكايتنا ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+        :root {
+            color-scheme: dark;
+            --rose: #8f304c;
+            --rose-light: #d7adb7;
+            --muted: #b9a7ac;
+            --panel: rgba(49, 18, 29, 0.52);
+            --line: rgba(153, 72, 94, 0.26);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            color: #fff;
+            display: block;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 38px 18px 52px;
+            background:
+                radial-gradient(ellipse at 50% -15%, rgba(91, 24, 43, 0.38), transparent 55%),
+                radial-gradient(ellipse at 100% 55%, rgba(67, 20, 36, 0.2), transparent 38%),
+                #080708;
+        }
+        .container {
+            width: 100%;
+            max-width: 760px;
+            margin-inline: auto;
+            padding: 0;
+            text-align: center;
+            position: relative;
+        }
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 24px;
+            transition: opacity 0.8s ease;
+            background:
+                radial-gradient(ellipse at 50% 43%, rgba(91, 24, 43, 0.34), transparent 43%),
+                rgba(8, 7, 8, 0.98);
+        }
+        .names-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 3px 22px rgba(166, 59, 91, 0.45);
+        }
+        .envelope-scene {
+            position: relative;
+            width: min(280px, 82vw);
+            height: 190px;
+            margin: 0 auto 28px;
+            perspective: 900px;
+            isolation: isolate;
+            overflow: hidden;
+            filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.36));
+            transition: height 0.7s ease;
+        }
+        .envelope-back, .envelope-front, .envelope-flap {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 160px;
+            border-radius: 12px;
+        }
+        .envelope-back {
+            z-index: 1;
+            background: linear-gradient(145deg, #76243e, #481526);
+        }
+        .letter {
+            position: absolute;
+            z-index: 2;
+            left: 8%;
+            bottom: 0;
+            width: 84%;
+            height: 150px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #f0dfe2;
+            background: linear-gradient(145deg, #30131e, #190d12);
+            border: 1px solid rgba(184, 112, 130, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 5px 18px rgba(56, 13, 31, 0.2);
+            transform: translateY(160px);
+            transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s;
+        }
+        .letter span, .letter small {
+            font-size: 12px;
+            color: #c2a2ab;
+        }
+        .letter strong {
+            font-size: 22px;
+            white-space: nowrap;
+        }
+        .letter .letter-message {
+            max-width: 225px;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .letter .letter-signature {
+            align-self: flex-end;
+            margin-inline: 8px;
+            color: #e2c6cd;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .envelope-front {
+            z-index: 4;
+            overflow: hidden;
+            background: linear-gradient(145deg, #76243e, #481526);
+            pointer-events: none;
+        }
+        .envelope-front::before, .envelope-front::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+        }
+        .envelope-front::before {
+            background: linear-gradient(145deg, rgba(166, 68, 91, 0.72), rgba(91, 29, 50, 0.22));
+            clip-path: polygon(0 0, 50% 58%, 0 100%);
+        }
+        .envelope-front::after {
+            background: linear-gradient(215deg, rgba(121, 37, 63, 0.72), rgba(63, 18, 35, 0.2));
+            clip-path: polygon(100% 0, 50% 58%, 100% 100%);
+        }
+        .envelope-flap {
+            z-index: 5;
+            bottom: auto;
+            top: 30px;
+            height: 90px;
+            background: linear-gradient(160deg, #bd6478, #8b304b);
+            clip-path: polygon(0 0, 100% 0, 50% 58%);
+            transform-origin: top center;
+            transition: transform 0.55s ease, z-index 0s 0.28s;
+            backface-visibility: hidden;
+        }
+        .envelope-scene.is-open .envelope-flap {
+            opacity: 0;
+            transform: rotateX(180deg) translateY(-30px);
+        }
+        .envelope-scene.is-open .letter {
+            z-index: 6;
+            transform: translateY(-92px);
+        }
+        .envelope-scene.is-open {
+            height: 270px;
+        }
+        .envelope-seal {
+            position: absolute;
+            z-index: 6;
+            top: 87px;
+            left: 50%;
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            color: white;
+            background: #8e304b;
+            border: 2px solid rgba(255, 255, 255, 0.55);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            transition: opacity 0.2s ease;
+        }
+        .envelope-scene.is-open .envelope-seal {
+            opacity: 0;
+        }
+        .open-btn {
+            min-height: 48px;
+            padding: 12px 28px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            background: linear-gradient(135deg, #76243e, #a63b5b);
+            border: 0;
+            box-shadow: 0 8px 24px rgba(118, 36, 62, 0.38);
+        }
+        .open-btn:hover {
+            background: linear-gradient(135deg, #8f304c, #b45168);
+            transform: translateY(-2px);
+        }
+        .continue-btn {
+            display: none;
+            margin: 18px auto 0;
+        }
+        .continue-btn.is-visible {
+            display: inline-block;
+            animation: appear 0.45s ease both;
+        }
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .main-content {
+            display: none;
+            opacity: 0;
+            width: 100%;
+            transition: opacity 1s ease;
+        }
+        .header-section {
+            position: relative;
+            overflow: hidden;
+            padding: 36px 24px 32px;
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background:
+                radial-gradient(ellipse at 80% 0%, rgba(112, 31, 57, 0.32), transparent 52%),
+                linear-gradient(145deg, rgba(53, 22, 33, 0.82), rgba(18, 11, 14, 0.92));
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+        }
+        .header-section::after {
+            content: "♡";
+            position: absolute;
+            left: 22px;
+            bottom: -34px;
+            color: rgba(191, 111, 130, 0.09);
+            font-size: 138px;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .header-section h1 {
+            font-size: 26px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .header-section p {
+            margin-bottom: 0;
+            color: var(--rose-light);
+            font-size: 15px;
+            font-weight: 400;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 34px 0 16px;
+            color: #f7dce7;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: right;
+            position: relative;
+        }
+        .section-title::before {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(90deg, transparent, rgba(185, 102, 122, 0.38));
+        }
+        .story-date {
+            margin: -5px 0 15px;
+            color: #ad97a1;
+            font-size: 12px;
+            text-align: right;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .card {
+            min-height: 104px;
+            padding: 17px 10px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: linear-gradient(150deg, rgba(48, 20, 30, 0.82), rgba(17, 11, 14, 0.96));
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(150deg, rgba(72, 27, 43, 0.88), rgba(26, 13, 19, 0.98));
+        }
+        .card .number {
+            margin-bottom: 1px;
+            color: #d78a9c;
+            font-size: clamp(23px, 5vw, 30px);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.4;
+        }
+        .card .label {
+            color: #c7b5be;
+            font-size: 12px;
+        }
+        .music-player {
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 0;
+            background: linear-gradient(145deg, rgba(48, 20, 30, 0.9), rgba(17, 11, 14, 0.98));
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.13);
+            backdrop-filter: blur(10px);
+        }
+        .track-art {
+            display: grid;
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+            place-items: center;
+            border: 1px solid rgba(184, 112, 130, 0.24);
+            border-radius: 15px;
+            background: linear-gradient(145deg, #76243e, #35131f);
+            box-shadow: 0 7px 20px rgba(100, 35, 58, 0.35);
+            font-size: 22px;
+        }
+        .music-info {
+            text-align: right;
+            flex: 1;
+            min-width: 0;
+        }
+        .music-info h4 {
+            color: #fff3f8;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .music-info p {
+            margin-top: 2px;
+            color: #bca8b2;
+            font-size: 11px;
+        }
+        .track-progress {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 9px;
+            direction: ltr;
+        }
+        .track-progress input {
+            width: 100%;
+            height: 4px;
+            accent-color: var(--rose);
+            cursor: pointer;
+        }
+        .track-time {
+            min-width: 32px;
+            color: #bca8b2;
+            font-size: 10px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+        }
+        .play-btn {
+            border: none;
+            width: 46px;
+            height: 46px;
+            flex: 0 0 46px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 15px;
+            background: linear-gradient(135deg, #76243e, #a63b5b);
+            box-shadow: 0 5px 16px rgba(100, 35, 58, 0.38);
+        }
+        .play-btn::before {
+            content: "";
+            width: 0;
+            height: 0;
+            margin-left: 3px;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 10px solid #fff;
+        }
+        .play-btn.is-playing::before {
+            width: 11px;
+            height: 13px;
+            margin-left: 0;
+            border: 0;
+            background: linear-gradient(90deg, #fff 0 3px, transparent 3px 8px, #fff 8px 11px);
+        }
+        .play-btn:hover {
+            transform: scale(1.06);
+        }
+        .promise-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .promise-grid .card .number {
+            font-size: 27px;
+        }
+        .message-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .pink-card {
+            padding: 17px;
+            border: 1px solid rgba(202, 139, 154, 0.17);
+            border-radius: 18px;
+            background: linear-gradient(110deg, rgba(67, 24, 39, 0.88), rgba(19, 12, 15, 0.98));
+            text-align: center;
+            font-weight: 600;
+            color: #f0dfe1;
+            font-size: 14px;
+        }
+        .page-footer {
+            padding: 30px 0 0;
+            color: #927d87;
+            font-size: 12px;
+            text-align: center;
+        }
+        .page-footer span {
+            color: var(--rose);
+        }
+        button:focus-visible {
+            outline: 2px solid #d5a5af;
+            outline-offset: 4px;
+        }
+        @media (max-width: 520px) {
+            body {
+                padding: 20px 14px 36px;
+            }
+            .header-section {
+                padding: 29px 19px 26px;
+                border-radius: 23px;
+            }
+            .section-title {
+                margin-top: 29px;
+                font-size: 15px;
+            }
+            .grid-3 {
+                gap: 8px;
+            }
+            .card {
+                min-height: 91px;
+                padding: 13px 6px;
+                border-radius: 16px;
+            }
+            .card .label {
+                font-size: 11px;
+            }
+            .music-player {
+                gap: 10px;
+                padding: 13px;
+            }
+            .track-art {
+                width: 44px;
+                height: 44px;
+                flex-basis: 44px;
+                border-radius: 13px;
+            }
+            .play-btn {
+                width: 42px;
+                height: 42px;
+                flex-basis: 42px;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <div class="envelope-scene" id="envelopeScene" aria-label="ظرف رسالة">
+            <div class="letter">
+                <strong>بحبك وبموت فيك ❤️</strong>
+                <small class="letter-message">إنتي أجمل صدفة في حياتي وكل دنيتي</small>
+                <small class="letter-signature">— أسامة</small>
+            </div>
+            <div class="envelope-back"></div>
+            <div class="envelope-front"></div>
+            <div class="envelope-flap"></div>
+            <div class="envelope-seal" aria-hidden="true">❤️</div>
+        </div>
+        <div class="names-title">حكايتنا ❤️</div>
+        <button class="open-btn" id="openLetterBtn" type="button" onclick="revealLetter()">💌 افتحي الجواب</button>
+        <p id="welcomeHint" style="font-size: 12px; color: #c9aeb9; margin-top: 15px;">افتحي الرسالة وشوفي اللي في قلبي ✨</p>
+        <button class="open-btn continue-btn" id="continueBtn" type="button" onclick="openStory()">ادخلي حكايتنا ❤️</button>
+    </div>
+
+    <div class="container main-content" id="mainContent">
+        <div class="header-section">
+            <h1>حكايتنا ❤️</h1>
+            <p>كل لحظة معاكي هي عمر جديد، وإنتي أغلى ما ليا في الدنيا</p>
+        </div>
+
+        <div class="section-title">من يوم ما بدأت قصتنا</div>
+        <p class="story-date">١٨ مارس ٢٠٢٦ · الساعة ٩ مساءً</p>
+
+        <div class="grid-3" aria-live="off">
+            <div class="card"><span class="number" id="days">0</span><span class="label">يوم</span></div>
+            <div class="card"><span class="number" id="months">0</span><span class="label">شهر</span></div>
+            <div class="card"><span class="number" id="years">0</span><span class="label">سنة</span></div>
+        </div>
+        <div class="grid-3" aria-live="off">
+            <div class="card"><span class="number" id="seconds">0</span><span class="label">ثانية</span></div>
+            <div class="card"><span class="number" id="minutes">0</span><span class="label">دقيقة</span></div>
+            <div class="card"><span class="number" id="hours">0</span><span class="label">ساعة</span></div>
+        </div>
+
+        <div class="section-title">🎵 أغنيتنا</div>
+        <div class="music-player">
+            <button class="play-btn" id="playAudioBtn" type="button" aria-label="تشغيل الموسيقى" aria-pressed="false" onclick="toggleMusic()"></button>
+            <div class="track-art" aria-hidden="true">🎵</div>
+            <div class="music-info">
+                <h4>نور عيني</h4>
+                <p id="musicStatus" aria-live="polite">الأغنية اللي بتجمعنا 🎵</p>
+                <div class="track-progress">
+                    <span class="track-time" id="currentTime">0:00</span>
+                    <input id="musicProgress" type="range" min="0" max="100" value="0" aria-label="تقدم الأغنية">
+                    <span class="track-time" id="duration">0:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">وعود من قلبي</div>
+        <div class="grid-3 promise-grid">
+            <div class="card"><span class="number">∞</span><span class="label">حبنا ملوش نهاية.. وعد</span></div>
+            <div class="card"><span class="number">🛡️</span><span class="label">هكون دايماً أمانك وسبب ضحكتك</span></div>
+            <div class="card"><span class="number">🫂</span><span class="label">هفضل سندك وضهرك في كل وقت</span></div>
+        </div>
+
+        <div class="section-title">كلام من قلبي</div>
+        <div class="grid-3 message-grid">
+            <div class="pink-card">إنتي أجمل نعمة ربنا رزقني بيها في حياتي كلها 💖</div>
+            <div class="pink-card">وجودك جنبي بيخلي الدنيا كلها منورة في عيني ✨</div>
+            <div class="pink-card">هتفضلي ملكة قلبي وحبيبتي وأغلى إنسانة عندي للأبد 👑</div>
+        </div>
+        <footer class="page-footer">اتعملت بكل حب ❤️</footer>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="12.Nor_Einy.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const playButton = document.getElementById('playAudioBtn');
+        const musicStatus = document.getElementById('musicStatus');
+        const musicProgress = document.getElementById('musicProgress');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const durationDisplay = document.getElementById('duration');
+        const storyStart = new Date(2026, 2, 18, 21, 0, 0);
+
+        function formatTime(seconds) {
+            if (!Number.isFinite(seconds)) return '0:00';
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        function updateElapsedTime() {
+            const now = new Date();
+            if (now < storyStart) {
+                ['years', 'months', 'days', 'hours', 'minutes', 'seconds'].forEach(id => {
+                    document.getElementById(id).textContent = '0';
+                });
+                return;
+            }
+
+            let years = now.getFullYear() - storyStart.getFullYear();
+            let cursor = new Date(storyStart);
+            cursor.setFullYear(storyStart.getFullYear() + years);
+            if (cursor > now) {
+                years--;
+                cursor = new Date(storyStart);
+                cursor.setFullYear(storyStart.getFullYear() + years);
+            }
+
+            let months = (now.getFullYear() - cursor.getFullYear()) * 12 + now.getMonth() - cursor.getMonth();
+            const monthCursor = new Date(cursor);
+            monthCursor.setMonth(cursor.getMonth() + months);
+            if (monthCursor > now) {
+                months--;
+                monthCursor.setTime(cursor.getTime());
+                monthCursor.setMonth(cursor.getMonth() + months);
+            }
+
+            let remainingSeconds = Math.floor((now - monthCursor) / 1000);
+            const days = Math.floor(remainingSeconds / 86400);
+            remainingSeconds %= 86400;
+            const hours = Math.floor(remainingSeconds / 3600);
+            remainingSeconds %= 3600;
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+
+        updateElapsedTime();
+        setInterval(updateElapsedTime, 1000);
+
+        function updateMusicControls(isPlaying) {
+            playButton.classList.toggle('is-playing', isPlaying);
+            playButton.setAttribute('aria-label', isPlaying ? 'إيقاف الموسيقى مؤقتاً' : 'تشغيل الموسيقى');
+            playButton.setAttribute('aria-pressed', String(isPlaying));
+            musicStatus.textContent = isPlaying ? 'بتعزف دلوقتي عشانك 🎵' : 'الأغنية اللي بتجمعنا 🎵';
+        }
+
+        function revealLetter() {
+            document.getElementById('envelopeScene').classList.add('is-open');
+            document.getElementById('openLetterBtn').hidden = true;
+            document.getElementById('welcomeHint').textContent = 'إنتي أجمل حاجة حصلت في حياتي، وبموت فيكي 💌';
+            setTimeout(() => {
+                document.getElementById('continueBtn').classList.add('is-visible');
+            }, 850);
+        }
+
+        function openStory() {
+            const welcome = document.getElementById('welcome-screen');
+            const main = document.getElementById('mainContent');
+            
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                main.style.display = 'block';
+                setTimeout(() => { main.style.opacity = '1'; }, 50);
+            }, 800);
+
+            music.play().catch(() => {
+                musicStatus.textContent = 'اضغطي تشغيل عشان تسمعي أغنيتنا 🎵';
+            });
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play().catch(() => {
+                    musicStatus.textContent = 'تعذر تشغيل الملف الصوتي';
+                });
+            } else {
+                music.pause();
+            }
+        }
+
+        music.addEventListener('play', () => updateMusicControls(true));
+        music.addEventListener('pause', () => updateMusicControls(false));
+        music.addEventListener('ended', () => updateMusicControls(false));
+        music.addEventListener('loadedmetadata', () => {
+            durationDisplay.textContent = formatTime(music.duration);
+        });
+        music.addEventListener('timeupdate', () => {
+            currentTimeDisplay.textContent = formatTime(music.currentTime);
+            if (Number.isFinite(music.duration) && music.duration > 0) {
+                musicProgress.value = String((music.currentTime / music.duration) * 100);
+            }
+        });
+        musicProgress.addEventListener('input', () => {
+            if (Number.isFinite(music.duration) && music.duration > 0) {
+                music.currentTime = (Number(musicProgress.value) / 100) * music.duration;
+            }
+        });
+        music.addEventListener('error', () => {
+            musicStatus.textContent = 'تعذر تحميل الملف الصوتي';
+        });
+    </script>
+</body>
+</html>
